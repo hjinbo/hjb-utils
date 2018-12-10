@@ -15,6 +15,10 @@
 *.iws
 *.iml
 *.ipr
+src/main/java/com/dz/kfb/Application.java
+src/main/java/com/dz/kfb/module/demo/*
+src/main/java/com/dz/kfb/module/test/*
+src/main/resources/*
 
 ### NetBeans ###
 /nbproject/private/
