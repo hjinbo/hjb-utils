@@ -1,10 +1,4 @@
-package com.dz.kfb.module.demo.test;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.*;
+package com.dz.kfb.module.utils;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -19,22 +13,45 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class ReadExcel {
+public class ExcelUtils {
 
-    static Logger logger = LoggerFactory.getLogger(ReadExcel.class);
+    private static Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
 
-    public static List<List<Object>> readExcel(File file) throws IOException {
+    public static void main(String[] args) throws Exception {
+        List<List<Object>> list = readExcel(new File("d:/test/test2.xlsx"), true, new int[]{0, 1}, 0);
+        for (List<Object> rows : list) {
+            for (Object o : rows) {
+                System.out.print(o.toString() + "\t");
+            }
+            System.out.println();
+        }
+    }
+
+    public static List<List<Object>> readExcel(File file, boolean readFirstRow, int[] needReadColumns, int sheetIndex) throws Exception {
+        if (!file.exists()) {
+            throw new Exception("找不到该文件");
+        }
         String fileName = file.getName();
-        String extension = fileName.lastIndexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
+        // 获得文件扩展名
+        String extension = fileName.lastIndexOf(".") == -1 ? "" : fileName
+                .substring(fileName.lastIndexOf(".") + 1);
         if ("xls".equals(extension)) {
-            logger.info("读取文件【{}】", file.getName());
-            return read2003Excel(file, true, new int[]{0, 1}, 0);
+            logger.info("读取xls文件【{}】", file.getName());
+            return read2003Excel(file, readFirstRow, needReadColumns, sheetIndex);
         } else if ("xlsx".equals(extension)) {
-            logger.info("读取文件【{}】", file.getName());
-            return read2007Excel(file, true, new int[]{0, 1}, 0);
+            logger.info("读取xlsx文件【{}】", file.getName());
+            return read2007Excel(file, readFirstRow, needReadColumns, sheetIndex);
         } else {
-            throw new IOException("不支持的文件类型");
+            throw new Exception("不支持的文件后缀");
         }
     }
 
@@ -65,6 +82,36 @@ public class ReadExcel {
             list.add(rowList);
         }
         return list;
+    }
+
+    private static List<List<Object>> read2007Excel(File file, boolean readFirstRow, int[] needReadColumns, int sheetIndex) throws IOException {
+        List<List<Object>> list = new ArrayList<>();
+        XSSFWorkbook xwb = new XSSFWorkbook(new FileInputStream(file));
+        XSSFSheet sheet = xwb.getSheetAt(sheetIndex);
+        XSSFRow row;
+        for (int rowCounter = 0; rowCounter <= sheet.getLastRowNum(); rowCounter++) {
+            // 每一个row对应一个rowList
+            List<Object> rowList = new ArrayList<>();
+            if (!readFirstRow) {
+                if (rowCounter == 0) {
+                    continue;
+                }
+                row = sheet.getRow(rowCounter);
+                for (int i = 0; i < needReadColumns.length; i++) {
+                    rowList.add(dataTypeTrans(row.getCell(needReadColumns[i])));
+                }
+            } else {
+                // 读取表头文件
+                row = sheet.getRow(rowCounter);
+                for (int i = 0; i < needReadColumns.length; i++) {
+                    rowList.add(dataTypeTrans(row.getCell(needReadColumns[i])));
+                }
+            }
+            // 到此将每一个cell放到rowList中了
+            list.add(rowList);
+        }
+        return list;
+
     }
 
     private static String dataTypeTrans(Cell cell) {
@@ -116,57 +163,5 @@ public class ReadExcel {
             sb.append(JSONUtils.toJSONString(map)).append("&");
         }
         return sb.toString().substring(0, sb.toString().length() - 1);
-    }
-
-    private static List<List<Object>> read2007Excel(File file, boolean readFirstRow, int[] needReadColumns, int sheetIndex) throws IOException {
-        List<List<Object>> list = new ArrayList<>();
-        XSSFWorkbook xwb = new XSSFWorkbook(new FileInputStream(file));
-        // 读取第一章表格内容
-        XSSFSheet sheet = xwb.getSheetAt(sheetIndex);
-        XSSFRow row;
-        for (int rowCounter = 0; rowCounter <= sheet.getLastRowNum(); rowCounter++) {
-            // 每一个row对应一个rowList
-            List<Object> rowList = new ArrayList<>();
-            if (!readFirstRow) {
-                if (rowCounter == 0) {
-                    continue;
-                }
-                row = sheet.getRow(rowCounter);
-                for (int i = 0; i < needReadColumns.length; i++) {
-                    rowList.add(dataTypeTrans(row.getCell(needReadColumns[i])));
-                }
-            } else {
-                // 读取表头文件
-                row = sheet.getRow(rowCounter);
-                for (int i = 0; i < needReadColumns.length; i++) {
-                    rowList.add(dataTypeTrans(row.getCell(needReadColumns[i])));
-                }
-            }
-            // 到此将每一个cell放到rowList中了
-            list.add(rowList);
-        }
-        return list;
-    }
-
-    public static void main(String[] args) {
-        try {
-            List<List<Object>> list=readExcel(new File("D:\\test\\test.xlsx"));
-            String jsonModel = "{\"YWLB\": \"02\", \n" +
-                    "\"KHMC\": \"小黑\", \n" +
-                    "\"ZJLB\": \"\", \n" +
-                    "\"ZJDM\": \"\", \n" +
-                    "\"SJHM\": \"13911069173\",\n" +
-                    "\"BRANCHNO\": \"9999\",\n" +
-                    "\"FUNDACCOUNT\": \"123\",\n" +
-                    "\"ISHISTORY\": \"1\"}";
-
-            logger.info("" + list);
-//            String resultJson = excelResultTransToJson(list, jsonModel);
-//            for (String s : resultJson.split("&")) {
-//                logger.info("" + s);
-//            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
