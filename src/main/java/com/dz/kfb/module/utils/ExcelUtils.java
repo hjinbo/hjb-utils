@@ -26,16 +26,6 @@ public class ExcelUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
 
-    public static void main(String[] args) throws Exception {
-        List<List<Object>> list = readExcel(new File("d:/test/test2.xlsx"), true, new int[]{0, 1}, 0);
-        for (List<Object> rows : list) {
-            for (Object o : rows) {
-                System.out.print(o.toString() + "\t");
-            }
-            System.out.println();
-        }
-    }
-
     public static List<List<Object>> readExcel(File file, boolean readFirstRow, int[] needReadColumns, int sheetIndex) throws Exception {
         if (!file.exists()) {
             throw new Exception("找不到该文件");
