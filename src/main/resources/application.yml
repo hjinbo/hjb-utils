@@ -1,0 +1,26 @@
+server:
+  port: 8079
+
+df:
+  boot:
+    datasource:
+      enabled: true
+      defaultKey: demo
+      datasources:
+        demo:
+          type: hikari
+          modules:
+          - demo
+          master: master
+          nodes:
+            master:
+              driver-class-name: oracle.jdbc.driver.OracleDriver
+              url: jdbc:oracle:thin:@//172.30.0.184:1521/testdb
+              username: COMMON_SERVICE
+              password: COMMON_SERVICE
+
+dz:
+  web:
+    open-cors: true
+  datasource:
+    enable-multi-datasource: true
