@@ -101,7 +101,6 @@ public class ExcelUtils {
             list.add(rowList);
         }
         return list;
-
     }
 
     private static String dataTypeTrans(Cell cell) {
@@ -121,15 +120,14 @@ public class ExcelUtils {
         } else if (type == CellType.BLANK) {
             return "";
         } else {
-            logger.info("不知名的cell类型: {}", type);
-            return "不知名的cell类型";
+            logger.warn("暂不能处理的cell类型: {}", type);
+            return "暂不能处理的cell类型";
         }
     }
 
     public static String excelResultTransToJson(List<List<Object>> excelList, String jsonModel) {
         StringBuilder sb = new StringBuilder();
         List<Object> firstRow = new ArrayList<>();
-
         for (int i = 0; i < excelList.size(); i++) {
             JSONObject obj = JSONObject.parseObject(jsonModel);
             Map<String, String> map = new HashMap<>();
@@ -138,9 +136,7 @@ public class ExcelUtils {
             }
             if (i == 0) {
                 firstRow = excelList.get(0); // 读取表头时该方法才生效
-                logger.info("表头：{}", firstRow);
             } else {
-
                 List<Object> rows = excelList.get(i);
                 for (int index = 0; index < firstRow.size(); index++) {
                     Object o = firstRow.get(index);
@@ -148,7 +144,6 @@ public class ExcelUtils {
                         map.put(String.valueOf(o), String.valueOf(rows.get(index)));
                     }
                 }
-
             }
             sb.append(JSONUtils.toJSONString(map)).append("&");
         }
