@@ -37,17 +37,17 @@ public class DBFUtils {
      * @param headParams
      * @param values
      */
-    public static void writeDBF(File file, Map<String, Object[]> headParams, Object[] values) {
+    public static void writeDBF(File file, Map<String, String[]> headParams, Object[] values) {
         try {
             if (!file.exists()) {
                 file.createNewFile();
                 DBFWriter writer = new DBFWriter(file, Charset.forName("GBK"));
                 DBFField[] fields = new DBFField[headParams.size()];
-                Object[] columnNames = headParams.get("columnNames");
-                Object[] columnDataType = headParams.get("columnDataType");
-                Object[] columnDataLength = headParams.get("columnDataLength");
+                String[] columnNames = headParams.get("columnNames");
+                String[] columnDataType = headParams.get("columnDataType");
+                String[] columnDataLength = headParams.get("columnDataLength");
                 for (int i = 0; i < columnNames.length; i++) {
-                    fields[i] = new DBFField(String.valueOf(columnNames[i]), transDataType(columnDataType[i]), Integer.parseInt(String.valueOf(columnDataLength[i])));
+                    fields[i] = new DBFField(columnNames[i], transDataType(columnDataType[i]), Integer.parseInt(columnDataLength[i]));
                 }
                 writer.setFields(fields);
                 writer.addRecord(values);
@@ -64,19 +64,19 @@ public class DBFUtils {
 
     }
 
-    private static DBFDataType transDataType(Object object) throws Exception {
-        if ("string".equals(String.valueOf(object))) {
+    private static DBFDataType transDataType(String type) throws Exception {
+        if ("string".equals(type)) {
             return DBFDataType.CHARACTER;
-        } else if ("int".equals(String.valueOf(object))) {
+        } else if ("int".equals(type)) {
             return DBFDataType.NUMERIC;
-        } else if ("double".equals(String.valueOf(object))) {
+        } else if ("double".equals(type)) {
             return DBFDataType.DOUBLE;
-        } else if ("long".equals(String.valueOf(object))) {
+        } else if ("long".equals(type)) {
             return DBFDataType.LONG;
-        } else if ("date".equals(String.valueOf(object))) {
+        } else if ("date".equals(type)) {
             return DBFDataType.DATE;
         } else {
-            logger.info("{}类型暂不支持", String.valueOf(object));
+            logger.info("{}类型暂不支持", type);
             throw new Exception("暂不支持的列数据类型");
         }
     }
