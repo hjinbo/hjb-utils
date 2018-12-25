@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: hjb-utils
+server:
+  port: 8079
+#dz:
+#  web:
+#    open-cors: true
+#  datasource:
+#    enable-multi-datasource: true

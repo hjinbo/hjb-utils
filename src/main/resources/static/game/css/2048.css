@@ -1,0 +1,82 @@
+.board-back {
+    width: 320px;
+    height: 320px;
+    background-color: grey;
+    padding: 5px;
+    margin-left: 500px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.chessman {
+    width: 70px;
+    height: 70px;
+    border-radius: 5px;
+    background-color: #bf9947;
+    margin: 5px;
+    float: left;
+}
+
+.btn-back {
+    width: 320px;
+    height: 60px;
+    margin-top: 20px;
+    background-color: grey;
+    border-radius: 5px;
+    padding: 5px;
+    margin-left: 500px;
+    text-align: center;
+}
+
+.score {
+    float: left;
+    width: 100px;
+    height: 50px;
+    background-color: yellow;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.best {
+    float: right;
+    width: 100px;
+    height: 50px;
+    background-color: yellow;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.score span {
+    display: block;
+    text-align: center;
+}
+
+.best span {
+    display: block;
+    text-align: center;
+}
+
+.btn {
+    float: left;
+    height: 50px;
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.reset {
+    float: left;
+    margin-left: 15px;
+}
+
+.chessman span {
+    margin: 30px;
+    line-height: 65px;
+    font-size: large;
+}
+
+#test {
+    width: 200px;
+    height: 200px;
+    backgroud-color: grey;
+}
+
